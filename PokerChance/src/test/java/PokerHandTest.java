@@ -11,72 +11,240 @@ class PokerHandTest {
     void generatePermutationsTest(){
         PokerBoard board = new PokerBoard("h2","h3","c9","c10","s2","da","dk");
         PokerHand pokerHand = new PokerHand(board);
-        Set<ArrayList<Card>> permutations = pokerHand.generatePermutations();
-
-
-        for (ArrayList list : permutations){
-            System.out.println(list);
-        }
-        assertTrue(permutations.size()==20);
-    }
-
-    @Test
-    void generateSinglePermutationsTest(){
-        PokerBoard board = new PokerBoard("h2","h3","c9","c10","s2","da","dk");
-        PokerHand pokerHand = new PokerHand(board);
-        pokerHand.generateSinglePermutations();
         Set<ArrayList<Card>> permutations = pokerHand.getPermHand();
 
-        for (ArrayList list : permutations){
+
+        for (ArrayList<Card> list : permutations){
             System.out.println(list);
         }
-        assertTrue(permutations.size()==10);
+        assertEquals(21, permutations.size());
     }
 
     @Test
-    void generateDoublePermutationsTest(){
-        PokerBoard board = new PokerBoard("h2","h3","c9","c10","s2","da","dk");
-        PokerHand pokerHand = new PokerHand(board);
-        pokerHand.generateDoublePermutations();
-        Set<ArrayList<Card>> permutations = pokerHand.getPermHand();
+    void testIsRoyalFlushTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h10"));
+        hand.add(new Card("hj"));
+        hand.add(new Card("hq"));
+        hand.add(new Card("hk"));
+        hand.add(new Card("ha"));
 
-        for (ArrayList list : permutations){
-            System.out.println(list);
-        }
-        assertTrue(permutations.size()==10);
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertTrue(pokerHand.isRoyalFlush(hand));
     }
 
     @Test
-    void testIsRoyalFlush() {
+    void testIsRoyalFlushFalse() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h10"));
+        hand.add(new Card("cj"));
+        hand.add(new Card("hq"));
+        hand.add(new Card("hk"));
+        hand.add(new Card("ha"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertFalse(pokerHand.isRoyalFlush(hand));
     }
 
     @Test
-    void testIsStraightFlush() {
+    void testIsRoyalFlushFalse2() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h10"));
+        hand.add(new Card("h2"));
+        hand.add(new Card("hq"));
+        hand.add(new Card("hk"));
+        hand.add(new Card("ha"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertFalse(pokerHand.isRoyalFlush(hand));
     }
 
     @Test
-    void testIsFourOfAKind() {
+    void testIsStraightFlushTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h2"));
+        hand.add(new Card("h3"));
+        hand.add(new Card("h4"));
+        hand.add(new Card("h5"));
+        hand.add(new Card("ha"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertTrue(pokerHand.isStraightFlush(hand));
+    }
+    @Test
+    void testIsStraightFlushFalse() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h9"));
+        hand.add(new Card("c9"));
+        hand.add(new Card("d9"));
+        hand.add(new Card("s9"));
+        hand.add(new Card("ha"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertFalse(pokerHand.isStraightFlush(hand));
     }
 
     @Test
-    void testIsFullHouse() {
+    void testIsFourOfAKindTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h9"));
+        hand.add(new Card("c9"));
+        hand.add(new Card("d9"));
+        hand.add(new Card("s9"));
+        hand.add(new Card("ha"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertTrue(pokerHand.isFourOfAKind(hand));
     }
 
     @Test
-    void testIsFlush() {
+    void testIsFullHouseTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h9"));
+        hand.add(new Card("c9"));
+        hand.add(new Card("d9"));
+        hand.add(new Card("s4"));
+        hand.add(new Card("h4"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertTrue(pokerHand.isFullHouse(hand));
     }
 
     @Test
-    void testIsStraight() {
+    void testIsFullHouseFalse1() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h9"));
+        hand.add(new Card("c5"));
+        hand.add(new Card("d9"));
+        hand.add(new Card("s4"));
+        hand.add(new Card("h4"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertFalse(pokerHand.isFullHouse(hand));
     }
 
     @Test
-    void testIsThreeOfAKind() {
+    void testIsFullHouseFalse2() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h3"));
+        hand.add(new Card("c4"));
+        hand.add(new Card("d4"));
+        hand.add(new Card("s4"));
+        hand.add(new Card("h4"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertFalse(pokerHand.isFullHouse(hand));
     }
 
     @Test
-    void testIsTwoPair() {
-        ArrayList<Card> hand = new ArrayList();
+    void testIsFlushTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h4"));
+        hand.add(new Card("h8"));
+        hand.add(new Card("h9"));
+        hand.add(new Card("h2"));
+        hand.add(new Card("ha"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertTrue(pokerHand.isFlush(hand));
+    }
+
+    @Test
+    void testIsFlushFalse() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h4"));
+        hand.add(new Card("h8"));
+        hand.add(new Card("c9"));
+        hand.add(new Card("h2"));
+        hand.add(new Card("ha"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertFalse(pokerHand.isFlush(hand));
+    }
+
+    @Test
+    void testIsStraightTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("c2"));
+        hand.add(new Card("h3"));
+        hand.add(new Card("c4"));
+        hand.add(new Card("h5"));
+        hand.add(new Card("h6"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertTrue(pokerHand.isStraight(hand));
+    }
+    @Test
+    void testIsStraightTrue2() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h4"));
+        hand.add(new Card("h3"));
+        hand.add(new Card("c2"));
+        hand.add(new Card("h5"));
+        hand.add(new Card("ca"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertTrue(pokerHand.isStraight(hand));
+    }
+
+    @Test
+    void testIsStraightFalse() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h2"));
+        hand.add(new Card("h3"));
+        hand.add(new Card("h8"));
+        hand.add(new Card("h5"));
+        hand.add(new Card("h6"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertFalse(pokerHand.isStraight(hand));
+    }
+
+    @Test
+    void testIsThreeOfAKindTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h4"));
+        hand.add(new Card("s4"));
+        hand.add(new Card("c4"));
+        hand.add(new Card("d5"));
+        hand.add(new Card("s5"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertTrue(pokerHand.isThreeOfAKind(hand));
+    }
+
+    @Test
+    void testIsThreeOfAKindFalse() {
+        ArrayList<Card> hand = new ArrayList<>();
+        hand.add(new Card("h4"));
+        hand.add(new Card("s4"));
+        hand.add(new Card("ca"));
+        hand.add(new Card("d5"));
+        hand.add(new Card("s5"));
+
+        //create empty pokerhand object for testing
+        PokerHand pokerHand = new PokerHand();
+        assertFalse(pokerHand.isThreeOfAKind(hand));
+    }
+
+    @Test
+    void testIsTwoPairTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
         hand.add(new Card("h4"));
         hand.add(new Card("s4"));
         hand.add(new Card("c4"));
@@ -92,8 +260,8 @@ class PokerHandTest {
      * Test to check if it identifies a pair.
      */
     @Test
-    void testIsPair1() {
-        ArrayList<Card> hand = new ArrayList();
+    void testIsPairFalse1() {
+        ArrayList<Card> hand = new ArrayList<>();
         hand.add(new Card("h4"));
         hand.add(new Card("s4"));
         hand.add(new Card("c4"));
@@ -109,8 +277,8 @@ class PokerHandTest {
      * Test to see it does not have false positives.
      */
     @Test
-    void testIsPair2() {
-        ArrayList<Card> hand = new ArrayList();
+    void testIsPairFalse2() {
+        ArrayList<Card> hand = new ArrayList<>();
         hand.add(new Card("h4"));
         hand.add(new Card("s6"));
         hand.add(new Card("c7"));
@@ -123,8 +291,8 @@ class PokerHandTest {
     }
 
     @Test
-    void testGetHighestCard() {
-        ArrayList<Card> hand = new ArrayList();
+    void testGetHighestCardTrue() {
+        ArrayList<Card> hand = new ArrayList<>();
         hand.add(new Card("h4"));
         hand.add(new Card("s1"));
         hand.add(new Card("ck"));
