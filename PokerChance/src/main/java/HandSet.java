@@ -4,7 +4,7 @@ public class HandSet {
 
     private Card[] handCards;
     private Card[] tableCards;
-    private Card[] cardPool;
+    private ArrayList<Card> cardPool;
     private Set<ArrayList<Card>> permutationsHand;
     private ArrayList<Card> bestHand;
     private int bestHandRank;
@@ -13,13 +13,11 @@ public class HandSet {
     /**
      * Constructor for PokerHand
      *
-     * @param board the board object containing the hand and table
+     * @param cards the cards given by a board
      */
-    public HandSet(PokerBoard board) {
+    public HandSet(ArrayList<Card> cards) {
 
-        this.handCards = board.getHand();
-        this.tableCards = board.getTable();
-        this.cardPool = makeCardPool();
+        this.cardPool = cards;
 
         this.permutationsHand = generatePermutations();
         findBestHand();
@@ -54,18 +52,18 @@ public class HandSet {
     public Set<ArrayList<Card>> generatePermutations() {
 
         Set<ArrayList<Card>> localPermutations = new HashSet<>();
-        for (int i = 0; i < cardPool.length - 4; i++) {
-            for (int j = i + 1; j < cardPool.length - 3; j++) {
-                for (int k = j + 1; k < cardPool.length - 2; k++) {
-                    for (int l = k + 1; l < cardPool.length - 1; l++) {
-                        for (int m = l + 1; m < cardPool.length; m++) {
+        for (int i = 0; i < cardPool.size() - 4; i++) {
+            for (int j = i + 1; j < cardPool.size() - 3; j++) {
+                for (int k = j + 1; k < cardPool.size() - 2; k++) {
+                    for (int l = k + 1; l < cardPool.size() - 1; l++) {
+                        for (int m = l + 1; m < cardPool.size(); m++) {
 
                             ArrayList<Card> perm = new ArrayList();
-                            perm.add(cardPool[i]);
-                            perm.add(cardPool[j]);
-                            perm.add(cardPool[k]);
-                            perm.add(cardPool[l]);
-                            perm.add(cardPool[m]);
+                            perm.add(cardPool.get(i));
+                            perm.add(cardPool.get(j));
+                            perm.add(cardPool.get(k));
+                            perm.add(cardPool.get(l));
+                            perm.add(cardPool.get(m));
 
                             localPermutations.add(perm);
 

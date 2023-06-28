@@ -10,7 +10,7 @@ class HandSetTest {
     @Test
     void generatePermutationsTest(){
         PokerBoard board = new PokerBoard("h2","h3","c9","c10","s2","da","dk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         Set<ArrayList<Card>> permutations = handSet.getPermHand();
 
 
@@ -22,7 +22,7 @@ class HandSetTest {
     @Test
     void findBestHandHighCard(){
         PokerBoard board = new PokerBoard("h2","h3","c9","c10","s4","da","dk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(0, handSet.getBestHandRank(), "Check best hand rank");
@@ -37,7 +37,7 @@ class HandSetTest {
     @Test
     void findBestHandPair(){
         PokerBoard board = new PokerBoard("h2","h3","c9","c10","s9","da","dk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(1, handSet.getBestHandRank(), "Check best hand rank");
@@ -50,7 +50,7 @@ class HandSetTest {
     @Test
     void findBestHandTwoPair(){
         PokerBoard board = new PokerBoard("h2","hk","c9","c10","s2","da","dk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(2, handSet.getBestHandRank(), "Check best hand rank");
@@ -62,7 +62,7 @@ class HandSetTest {
     @Test
     void findBestHandThreeOfAKind(){
         PokerBoard board = new PokerBoard("h2","hk","c9","c10","s2","da","dk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(2, handSet.getBestHandRank(), "Check best hand rank");
@@ -74,7 +74,7 @@ class HandSetTest {
     @Test
     void findBestHandStraight(){
         PokerBoard board = new PokerBoard("h2","h7","c9","c10","sj","d8","dk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(4, handSet.getBestHandRank(), "Check best hand rank");
@@ -84,7 +84,7 @@ class HandSetTest {
     @Test
     void findBestHandFlush(){
         PokerBoard board = new PokerBoard("h2","h3","h9","c10","s4","ha","hk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(5, handSet.getBestHandRank(), "Check best hand rank");
@@ -94,7 +94,7 @@ class HandSetTest {
     @Test
     void findBestHandFullHouse(){
         PokerBoard board = new PokerBoard("h2","h3","c3","c10","s3","da","d10");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(6, handSet.getBestHandRank(), "Check best hand rank");
@@ -105,7 +105,7 @@ class HandSetTest {
     @Test
     void findBestHandFourOfAKind(){
         PokerBoard board = new PokerBoard("h10","h10","c9","c10","s10","da","dk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(7, handSet.getBestHandRank(), "Check best hand rank");
@@ -116,7 +116,7 @@ class HandSetTest {
     @Test
     void findBestHandStraightFlush(){
         PokerBoard board = new PokerBoard("h2","h7","h9","h10","hj","h8","hk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(8, handSet.getBestHandRank(), "Check best hand rank");
@@ -125,7 +125,7 @@ class HandSetTest {
     @Test
     void findBestHandRoyalFlush(){
         PokerBoard board = new PokerBoard("hj","hq","c9","h10","s2","ha","hk");
-        HandSet handSet = new HandSet(board);
+        HandSet handSet = new HandSet(board.getCardPool());
         System.out.println(handSet.getBestHandIdentifiers());
 
         assertEquals(9, handSet.getBestHandRank(), "Check best hand rank");

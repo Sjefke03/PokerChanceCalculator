@@ -143,4 +143,9 @@ public class Card {
     public String toString() {
         return color + rank;
     }
+
+    // Override equals method to compare cards based on color and rank
+    public boolean equals(Card card) {
+        return rank.equals(card.rank) && color.equals(card.color);
+    }
 }
