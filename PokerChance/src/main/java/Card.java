@@ -26,7 +26,7 @@ public class Card {
             throw new IllegalArgumentException("Rank was invalid");
         }
 
-        System.out.println("Created card: " + color + rank);
+        //System.out.println("Created card: " + color + rank);
     }
 
     /**
@@ -37,7 +37,7 @@ public class Card {
      */
     private boolean isValidColor(String c) {
         //is a Hearts Clubs Diamonds or Spades
-        String[] colors = {"*", "h", "c", "d", "s"};
+        String[] colors = {"*", "h", "c", "d", "s", "u"};
 
         //initialy false turns true if its in the list
         boolean valid = false;
@@ -58,7 +58,7 @@ public class Card {
      */
     private boolean isValidRank(String r) {
         //is a Hearts Clubs Diamonds or Spades
-        String[] ranks = {"*", "2", "3", "4", "5", "6", "7", "8", "9", "1", "j", "q", "k", "a"};
+        String[] ranks = {"*", "2", "3", "4", "5", "6", "7", "8", "9", "1", "j", "q", "k", "a", "u"};
 
         //initialy false turns true if its in the list
         boolean valid = false;
@@ -127,6 +127,7 @@ public class Card {
             return 14;
         }
         else{
+            //also case for unknown u
             return -1;
         }
 
