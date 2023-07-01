@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Public class poker board is represents an active poker board. With input player cards h1 and h2
@@ -9,9 +8,9 @@ import java.util.Set;
  */
 public class PokerBoard {
 
-    private int winChance;
-    private int tieChance;
-    private int loseChance;
+    private static AtomicInteger winChance = new AtomicInteger(0);
+    private static AtomicInteger loseChance = new AtomicInteger(0);
+    private static AtomicInteger tieChance = new AtomicInteger(0);
     private Card[] hand1Cards = new Card[2];
     private Card[] hand2Cards = new Card[2];
     private Card[] openCards = new Card[5];
@@ -48,9 +47,6 @@ public class PokerBoard {
     }
 
     public void calculateChances() {
-        winChance = 0;
-        tieChance = 0;
-        loseChance = 0;
 
         //generate all possible cards
         ArrayList<Card> availableCards = generateRealCards();
@@ -75,6 +71,7 @@ public class PokerBoard {
             }
         }
 
+
         //supply the opponent with all possible ways of unknown hands
         for (int i = 0; i < availableCards.size(); i++) {
             for (int j = i + 1; j < availableCards.size(); j++) {
@@ -85,41 +82,50 @@ public class PokerBoard {
 
 
                 if (unknownCounter == 1) {
-                    supplyOneOpenCards(availableCards, i,j);
+                    supplyOneOpenCards(availableCards, i, j);
 
                 } else if (unknownCounter == 2) {
-                    supplyTwoOpenCards(availableCards, i,j);
+                    supplyTwoOpenCards(availableCards, i, j);
 
                 } else if (unknownCounter == 3) {
-                    supplyThreeOpenCards(availableCards, i,j);
+                    supplyThreeOpenCards(availableCards, i, j);
 
                 } else if (unknownCounter == 4) {
-                    supplyFourOpenCards(availableCards, i,j);
+                    supplyFourOpenCards(availableCards, i, j);
 
                 } else if (unknownCounter == 5) {
-                    supplyFiveOpenCards(availableCards, i,j);
+                    supplyFiveOpenCards(availableCards, i, j);
 
                 } else {
+                    supplyZeroOpenCards();
 
-                    //perform with current cards
-                    HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-                    HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
-
-                    int result = compareHands(handSet1, handSet2);
-                    if (result == 1) {
-                        winChance++;
-                    } else if (result == 2) {
-                        loseChance++;
-                    } else if (result == 0) {
-                        tieChance++;
-                    }
                 }
             }
         }
 
     }
 
-    protected void supplyFiveOpenCards(ArrayList<Card> availableCards,int i, int j) {
+    protected void supplyZeroOpenCards() {
+        //perform with current cards
+
+
+        HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
+        HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
+
+        int result = compareHands(handSet1, handSet2);
+        if (result == 1) {
+            winChance.incrementAndGet();
+        } else if (result == 2) {
+            loseChance.incrementAndGet();
+        } else if (result == 0) {
+            tieChance.incrementAndGet();
+        }
+
+
+    }
+
+
+    protected void supplyFiveOpenCards(ArrayList<Card> availableCards, int i, int j) {
         //given the index of two used cards, supply the open cards with all possible combinations
         for (int k = 0; k < availableCards.size(); k++) {
             if (k == i || k == j) {
@@ -160,11 +166,11 @@ public class PokerBoard {
 
                             int result = compareHands(handSet1, handSet2);
                             if (result == 1) {
-                                winChance++;
+                                winChance.incrementAndGet();
                             } else if (result == 2) {
-                                loseChance++;
+                                loseChance.incrementAndGet();
                             } else if (result == 0) {
-                                tieChance++;
+                                tieChance.incrementAndGet();
                             }
 
 
@@ -207,11 +213,11 @@ public class PokerBoard {
 
                         int result = compareHands(handSet1, handSet2);
                         if (result == 1) {
-                            winChance++;
+                            winChance.incrementAndGet();
                         } else if (result == 2) {
-                            loseChance++;
+                            loseChance.incrementAndGet();
                         } else if (result == 0) {
-                            tieChance++;
+                            tieChance.incrementAndGet();
                         }
 
 
@@ -252,11 +258,11 @@ public class PokerBoard {
 
                     int result = compareHands(handSet1, handSet2);
                     if (result == 1) {
-                        winChance++;
+                        winChance.incrementAndGet();
                     } else if (result == 2) {
-                        loseChance++;
+                        loseChance.incrementAndGet();
                     } else if (result == 0) {
-                        tieChance++;
+                        tieChance.incrementAndGet();
                     }
 
 
@@ -267,42 +273,47 @@ public class PokerBoard {
 
     }
 
-    protected void supplyTwoOpenCards(ArrayList<Card> availableCards,int i, int j) {
+    protected void supplyTwoOpenCards(ArrayList<Card> availableCards, int i, int j) {
         //given the index of two used cards, supply the open cards with all possible combinations
 
 
-        for (int n = 0; n < availableCards.size(); n++) {
-            if (n == i || n == j) {
-                continue;
-            }
+        new Thread(() -> {
+            // code goes here.
 
-            for (int o = n + 1; o < availableCards.size(); o++) {
-                if (o == i || o == j) {
+
+            for (int n = 0; n < availableCards.size(); n++) {
+                if (n == i || n == j) {
                     continue;
                 }
 
-                openCards[3] = availableCards.get(n);
-                openCards[4] = availableCards.get(o);
+                for (int o = n + 1; o < availableCards.size(); o++) {
+                    if (o == i || o == j) {
+                        continue;
+                    }
+
+                    openCards[3] = availableCards.get(n);
+                    openCards[4] = availableCards.get(o);
 
 
-                //compare the hands
-                HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-                HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
+                    //compare the hands
+                    HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
+                    HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
 
-                int result = compareHands(handSet1, handSet2);
-                if (result == 1) {
-                    winChance++;
-                } else if (result == 2) {
-                    loseChance++;
-                } else if (result == 0) {
-                    tieChance++;
+                    int result = compareHands(handSet1, handSet2);
+                    if (result == 1) {
+                        winChance.incrementAndGet();
+                    } else if (result == 2) {
+                        loseChance.incrementAndGet();
+                    } else if (result == 0) {
+                        tieChance.incrementAndGet();
+                    }
                 }
-            }
-        }
 
+            }
+        }).start();
     }
 
-    protected void supplyOneOpenCards(ArrayList<Card> availableCards,int i, int j) {
+    protected void supplyOneOpenCards(ArrayList<Card> availableCards, int i, int j) {
         //given the index of two used cards, supply the open cards with all possible combinations
 
 
@@ -311,6 +322,7 @@ public class PokerBoard {
                 continue;
             }
 
+
             openCards[4] = availableCards.get(o);
             //compare the hands
             HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
@@ -318,13 +330,16 @@ public class PokerBoard {
 
             int result = compareHands(handSet1, handSet2);
             if (result == 1) {
-                winChance++;
+                winChance.incrementAndGet();
             } else if (result == 2) {
-                loseChance++;
+                loseChance.incrementAndGet();
             } else if (result == 0) {
-                tieChance++;
+                tieChance.incrementAndGet();
             }
+
+
         }
+
     }
 
 
@@ -394,14 +409,27 @@ public class PokerBoard {
     }
 
     public int getWinChance() {
-        return winChance;
+        return winChance.get();
     }
 
     public int getTieChance() {
-        return tieChance;
+        return tieChance.get();
     }
 
     public int getLoseChance() {
-        return loseChance;
+        return loseChance.get();
+    }
+
+    //create setters for the chances
+    public void setWinChance(int winChance) {
+        this.winChance.set(winChance);
+    }
+
+    public void setTieChance(int tieChance) {
+        this.tieChance.set(tieChance);
+    }
+
+    public void setLoseChance(int loseChance) {
+        this.loseChance.set(loseChance);
     }
 }
