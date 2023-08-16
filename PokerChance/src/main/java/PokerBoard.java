@@ -8,9 +8,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class PokerBoard {
 
-    private static AtomicInteger winChance = new AtomicInteger(0);
-    private static AtomicInteger loseChance = new AtomicInteger(0);
-    private static AtomicInteger tieChance = new AtomicInteger(0);
+    private AtomicInteger requiredCalculations = new AtomicInteger(0);
+    private AtomicInteger winChance = new AtomicInteger(0);
+    private AtomicInteger loseChance = new AtomicInteger(0);
+    private AtomicInteger tieChance = new AtomicInteger(0);
     private Card[] hand1Cards = new Card[2];
     private Card[] hand2Cards = new Card[2];
     private Card[] openCards = new Card[5];
@@ -71,7 +72,7 @@ public class PokerBoard {
             }
         }
 
-
+        boolean roundOne = true;
         //supply the opponent with all possible ways of unknown hands
         for (int i = 0; i < availableCards.size(); i++) {
             for (int j = i + 1; j < availableCards.size(); j++) {
@@ -82,45 +83,65 @@ public class PokerBoard {
 
 
                 if (unknownCounter == 1) {
-                    supplyOneOpenCards(availableCards, i, j);
+                    if (roundOne) {
+                        requiredCalculations.set(45540);
+                        roundOne = false;
+                    }
+
+                    supplyOneOpenCards(availableCards, i, j, 0);
 
                 } else if (unknownCounter == 2) {
+                    if (roundOne) {
+                        requiredCalculations.set(1070190);
+                        roundOne = false;
+                    }
+
                     supplyTwoOpenCards(availableCards, i, j);
 
                 } else if (unknownCounter == 3) {
+
+                    if (roundOne) {
+                        requiredCalculations.set(17123040);
+                        roundOne = false;
+                    }
                     supplyThreeOpenCards(availableCards, i, j);
 
                 } else if (unknownCounter == 4) {
+                    if (roundOne) {
+                        requiredCalculations.set(209757240);
+                        roundOne = false;
+                    }
                     supplyFourOpenCards(availableCards, i, j);
 
                 } else if (unknownCounter == 5) {
+                    if (roundOne) {
+                        requiredCalculations.set(2097572400);
+                        roundOne = false;
+                    }
                     supplyFiveOpenCards(availableCards, i, j);
 
                 } else {
-                    supplyZeroOpenCards();
+                    if (roundOne) {
+                        requiredCalculations.set(990);
+                        roundOne = false;
+                    }
+
+                    compareHandSets();
 
                 }
             }
         }
 
-    }
-
-    protected void supplyZeroOpenCards() {
-        //perform with current cards
-
-
-        HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-        HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
-
-        int result = compareHands(handSet1, handSet2);
-        if (result == 1) {
-            winChance.incrementAndGet();
-        } else if (result == 2) {
-            loseChance.incrementAndGet();
-        } else if (result == 0) {
-            tieChance.incrementAndGet();
+        //wait until all calculations are done by checking if the required calculations are done
+        while (requiredCalculations.get() > 1) {
+//            try {
+//                Thread.sleep(1);
+//                System.out.println(requiredCalculations.get());
+//                System.out.println("Waiting to finish threads...");
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
-
 
     }
 
@@ -161,17 +182,7 @@ public class PokerBoard {
 
 
                             //compare the hands
-                            HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-                            HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
-
-                            int result = compareHands(handSet1, handSet2);
-                            if (result == 1) {
-                                winChance.incrementAndGet();
-                            } else if (result == 2) {
-                                loseChance.incrementAndGet();
-                            } else if (result == 0) {
-                                tieChance.incrementAndGet();
-                            }
+                            compareHandSets();
 
 
                         }
@@ -208,18 +219,7 @@ public class PokerBoard {
 
 
                         //compare the hands
-                        HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-                        HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
-
-                        int result = compareHands(handSet1, handSet2);
-                        if (result == 1) {
-                            winChance.incrementAndGet();
-                        } else if (result == 2) {
-                            loseChance.incrementAndGet();
-                        } else if (result == 0) {
-                            tieChance.incrementAndGet();
-                        }
-
+                        compareHandSets();
 
                     }
                 }
@@ -230,8 +230,6 @@ public class PokerBoard {
 
     protected void supplyThreeOpenCards(ArrayList<Card> availableCards, int i, int j) {
         //given the index of two used cards, supply the open cards with all possible combinations
-
-
         for (int m = 0; m < availableCards.size(); m++) {
             if (m == i || m == j) {
                 continue;
@@ -250,20 +248,8 @@ public class PokerBoard {
                     openCards[2] = availableCards.get(m);
                     openCards[3] = availableCards.get(n);
                     openCards[4] = availableCards.get(o);
-
-
                     //compare the hands
-                    HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-                    HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
-
-                    int result = compareHands(handSet1, handSet2);
-                    if (result == 1) {
-                        winChance.incrementAndGet();
-                    } else if (result == 2) {
-                        loseChance.incrementAndGet();
-                    } else if (result == 0) {
-                        tieChance.incrementAndGet();
-                    }
+                    compareHandSets();
 
 
                 }
@@ -276,70 +262,69 @@ public class PokerBoard {
     protected void supplyTwoOpenCards(ArrayList<Card> availableCards, int i, int j) {
         //given the index of two used cards, supply the open cards with all possible combinations
 
-
-        new Thread(() -> {
-            // code goes here.
-
-
             for (int n = 0; n < availableCards.size(); n++) {
                 if (n == i || n == j) {
                     continue;
                 }
+                int pass = n;
 
-                for (int o = n + 1; o < availableCards.size(); o++) {
+                //new Thread(() -> {
+                openCards[3] = availableCards.get(pass);
+
+                for (int o = pass + 1; o < availableCards.size(); o++) {
                     if (o == i || o == j) {
                         continue;
                     }
 
-                    openCards[3] = availableCards.get(n);
                     openCards[4] = availableCards.get(o);
 
 
                     //compare the hands
-                    HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-                    HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
+                    compareHandSets();
 
-                    int result = compareHands(handSet1, handSet2);
-                    if (result == 1) {
-                        winChance.incrementAndGet();
-                    } else if (result == 2) {
-                        loseChance.incrementAndGet();
-                    } else if (result == 0) {
-                        tieChance.incrementAndGet();
-                    }
                 }
-
+                //}).start();
             }
-        }).start();
+
     }
 
-    protected void supplyOneOpenCards(ArrayList<Card> availableCards, int i, int j) {
+    protected void supplyOneOpenCards(ArrayList<Card> availableCards, int i, int j, int counter1) {
         //given the index of two used cards, supply the open cards with all possible combinations
 
 
-        for (int o = 0; o < availableCards.size(); o++) {
-            if (o == i || o == j) {
-                continue;
+            for (int o = 0; o < availableCards.size(); o++) {
+                if (o == i || o == j) {
+                    continue;
+                }
+                openCards[4] = availableCards.get(o);
+
+                //new Thread(() -> {
+                //compare the hands
+                compareHandSets();
+                //}).start();
+
             }
 
 
-            openCards[4] = availableCards.get(o);
-            //compare the hands
-            HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-            HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
+    }
 
-            int result = compareHands(handSet1, handSet2);
-            if (result == 1) {
-                winChance.incrementAndGet();
-            } else if (result == 2) {
-                loseChance.incrementAndGet();
-            } else if (result == 0) {
-                tieChance.incrementAndGet();
-            }
+    protected void compareHandSets() {
 
+        //perform with current cards
+        HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
+        HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
 
+        int result = compareHands(handSet1, handSet2);
+        if (result == 1) {
+            winChance.getAndIncrement();
+        } else if (result == 2) {
+            loseChance.getAndIncrement();
+        } else if (result == 0) {
+            tieChance.getAndIncrement();
         }
 
+        //countdown from required calculations
+        requiredCalculations.getAndDecrement();
     }
 
 

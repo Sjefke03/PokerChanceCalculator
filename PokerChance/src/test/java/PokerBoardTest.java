@@ -42,12 +42,13 @@ class PokerBoardTest {
         float winChancePercent =  (float) winChance / total * 100;
         System.out.println("W " + winChance + " T " + tieChance + " L " + loseChance+ " TOTAL " + total);
         System.out.println("Chance of winning: " + winChancePercent);
+        assertTrue(total == 990);
 
     }
 
     @Test
     void calculateChances1Wildcard() {
-        PokerBoard board = new PokerBoard("ha","hk","h10","hj","","c2","c5");
+        PokerBoard board = new PokerBoard("ha","hk","da","hj","","c2","c3");
 
         int winChance = board.getWinChance();
         int tieChance = board.getTieChance();
@@ -57,12 +58,13 @@ class PokerBoardTest {
         float winChancePercent =  (float) winChance / total * 100;
         System.out.println("W " + winChance + " T " + tieChance + " L " + loseChance+ " TOTAL " + total);
         System.out.println("Chance of winning: " + winChancePercent);
+        assertTrue(total == 45540);
 
     }
 
     @Test
     void calculateChances2Wildcard() {
-        PokerBoard board = new PokerBoard("ha","hk","h10","hj","","c2","");
+        PokerBoard board = new PokerBoard("ha","da","sa","hj","","c2","");
 
         int winChance = board.getWinChance();
         int tieChance = board.getTieChance();
@@ -72,7 +74,7 @@ class PokerBoardTest {
         float winChancePercent =  (float) winChance / total * 100;
         System.out.println("W " + winChance + " T " + tieChance + " L " + loseChance+ " TOTAL " + total);
         System.out.println("Chance of winning: " + winChancePercent);
-
+        assertTrue(total == 1070190);
     }
 
 }
