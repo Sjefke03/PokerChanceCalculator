@@ -14,7 +14,7 @@ public class PokerBoard {
     private AtomicInteger tieChance = new AtomicInteger(0);
     private Card[] hand1Cards = new Card[2];
     private Card[] hand2Cards = new Card[2];
-    private Card[] openCards = new Card[5];
+    private AtomicOpenCards openCards = new AtomicOpenCards();
     private Card[] handOpponent = new Card[2];
 
     private ArrayList<Card> cardPool;
@@ -24,13 +24,13 @@ public class PokerBoard {
 
         this.hand1Cards[0] = new Card(trimCard(h1));
         this.hand1Cards[1] = new Card(trimCard(h2));
-        this.openCards[0] = new Card(trimCard(t1));
-        this.openCards[1] = new Card(trimCard(t2));
-        this.openCards[2] = new Card(trimCard(t3));
-        this.openCards[3] = new Card(trimCard(t4));
-        this.openCards[4] = new Card(trimCard(t5));
+        this.openCards.setCard(new Card(trimCard(t1)), 0);
+        this.openCards.setCard(new Card(trimCard(t2)), 1);
+        this.openCards.setCard(new Card(trimCard(t3)), 2);
+        this.openCards.setCard(new Card(trimCard(t4)), 3);
+        this.openCards.setCard(new Card(trimCard(t5)), 4);
 
-        this.cardPool = makeKnownCardPool(hand1Cards, openCards);
+        this.cardPool = makeKnownCardPool(hand1Cards, openCards.getOpenCards());
 
         calculateChances();
     }
@@ -54,12 +54,21 @@ public class PokerBoard {
 
         int unknownCounter = 0;
 
+        ArrayList<Integer> numberToRemove = new ArrayList<Integer>();
         //remove wildcards from the card pool
         for (int i = 0; i < cardPool.size(); i++) {
             if (cardPool.get(i).equals(new Card("**"))) {
                 unknownCounter++;
-                cardPool.remove(i);
+                numberToRemove.add(i);
+                //cardPool.remove(i);
             }
+        }
+
+        //remove numbers from cardpool
+        int deleted = 0;
+        for (int number : numberToRemove) {
+            cardPool.remove(number - deleted);
+            deleted++;
         }
 
 
@@ -88,7 +97,7 @@ public class PokerBoard {
                         roundOne = false;
                     }
 
-                    supplyOneOpenCards(availableCards, i, j, 0);
+                    supplyOneOpenCards(availableCards, i, j, -1);
 
                 } else if (unknownCounter == 2) {
                     if (roundOne) {
@@ -96,29 +105,11 @@ public class PokerBoard {
                         roundOne = false;
                     }
 
-                    supplyTwoOpenCards(availableCards, i, j);
+                    supplyTwoOpenCards(availableCards, i, j, -1);
 
-                } else if (unknownCounter == 3) {
+                } else if (unknownCounter >= 3) {
 
-                    if (roundOne) {
-                        requiredCalculations.set(17123040);
-                        roundOne = false;
-                    }
-                    supplyThreeOpenCards(availableCards, i, j);
-
-                } else if (unknownCounter == 4) {
-                    if (roundOne) {
-                        requiredCalculations.set(209757240);
-                        roundOne = false;
-                    }
-                    supplyFourOpenCards(availableCards, i, j);
-
-                } else if (unknownCounter == 5) {
-                    if (roundOne) {
-                        requiredCalculations.set(2097572400);
-                        roundOne = false;
-                    }
-                    supplyFiveOpenCards(availableCards, i, j);
+                    throw new IllegalArgumentException("Too many unknown cards");
 
                 } else {
                     if (roundOne) {
@@ -134,6 +125,9 @@ public class PokerBoard {
 
         //wait until all calculations are done by checking if the required calculations are done
         while (requiredCalculations.get() > 1) {
+
+            //end thread that is waiting for calculations to finish
+
 //            try {
 //                Thread.sleep(1);
 //                System.out.println(requiredCalculations.get());
@@ -145,165 +139,36 @@ public class PokerBoard {
 
     }
 
+    protected void supplyTwoOpenCards(ArrayList<Card> availableCards, int i, int j, int pass2) {
 
-    protected void supplyFiveOpenCards(ArrayList<Card> availableCards, int i, int j) {
-        //given the index of two used cards, supply the open cards with all possible combinations
-        for (int k = 0; k < availableCards.size(); k++) {
-            if (k == i || k == j) {
+        for (int n = pass2 + 1; n < availableCards.size(); n++) {
+            if (n == i || n == j) {
                 continue;
             }
+            int pass = n;
+            openCards.setCard(availableCards.get(pass), 3);
 
-            for (int l = k + 1; l < availableCards.size(); l++) {
-                if (l == i || l == j) {
-                    continue;
-                }
-
-                for (int m = l + 1; m < availableCards.size(); m++) {
-                    if (m == i || m == j) {
-                        continue;
-                    }
-
-                    for (int n = m + 1; n < availableCards.size(); n++) {
-                        if (n == i || n == j) {
-                            continue;
-                        }
-
-                        for (int o = n + 1; o < availableCards.size(); o++) {
-
-                            if (o == i || o == j) {
-                                continue;
-                            }
-
-                            openCards[0] = availableCards.get(k);
-                            openCards[1] = availableCards.get(l);
-                            openCards[2] = availableCards.get(m);
-                            openCards[3] = availableCards.get(n);
-                            openCards[4] = availableCards.get(o);
-
-
-                            //compare the hands
-                            compareHandSets();
-
-
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    protected void supplyFourOpenCards(ArrayList<Card> availableCards, int i, int j) {
-        //given the index of two used cards, supply the open cards with all possible combinations
-
-        for (int l = 0; l < availableCards.size(); l++) {
-            if (l == i || l == j) {
-                continue;
-            }
-            for (int m = l + 1; m < availableCards.size(); m++) {
-                if (m == i || m == j) {
-                    continue;
-                }
-                for (int n = m + 1; n < availableCards.size(); n++) {
-                    if (n == i || n == j) {
-                        continue;
-                    }
-                    for (int o = n + 1; o < availableCards.size(); o++) {
-                        if (o == i || o == j) {
-                            continue;
-                        }
-
-                        openCards[1] = availableCards.get(l);
-                        openCards[2] = availableCards.get(m);
-                        openCards[3] = availableCards.get(n);
-                        openCards[4] = availableCards.get(o);
-
-
-                        //compare the hands
-                        compareHandSets();
-
-                    }
-                }
-            }
+            //go one card deeper
+            new Thread(() -> {
+                supplyOneOpenCards(availableCards, i, j, pass);
+            }).start();
         }
 
     }
 
-    protected void supplyThreeOpenCards(ArrayList<Card> availableCards, int i, int j) {
+    protected void supplyOneOpenCards(ArrayList<Card> availableCards, int i, int j, int pass1) {
         //given the index of two used cards, supply the open cards with all possible combinations
-        for (int m = 0; m < availableCards.size(); m++) {
-            if (m == i || m == j) {
+
+        for (int o = pass1 + 1; o < availableCards.size(); o++) {
+
+            if (o == i || o == j) {
                 continue;
             }
+            openCards.setCard(availableCards.get(o), 4);
 
-            for (int n = m + 1; n < availableCards.size(); n++) {
-                if (n == i || n == j) {
-                    continue;
-                }
-
-                for (int o = n + 1; o < availableCards.size(); o++) {
-                    if (o == i || o == j) {
-                        continue;
-                    }
-
-                    openCards[2] = availableCards.get(m);
-                    openCards[3] = availableCards.get(n);
-                    openCards[4] = availableCards.get(o);
-                    //compare the hands
-                    compareHandSets();
-
-
-                }
-            }
+            //compare the hands
+            compareHandSets();
         }
-
-
-    }
-
-    protected void supplyTwoOpenCards(ArrayList<Card> availableCards, int i, int j) {
-        //given the index of two used cards, supply the open cards with all possible combinations
-
-            for (int n = 0; n < availableCards.size(); n++) {
-                if (n == i || n == j) {
-                    continue;
-                }
-                int pass = n;
-
-                //new Thread(() -> {
-                openCards[3] = availableCards.get(pass);
-
-                for (int o = pass + 1; o < availableCards.size(); o++) {
-                    if (o == i || o == j) {
-                        continue;
-                    }
-
-                    openCards[4] = availableCards.get(o);
-
-
-                    //compare the hands
-                    compareHandSets();
-
-                }
-                //}).start();
-            }
-
-    }
-
-    protected void supplyOneOpenCards(ArrayList<Card> availableCards, int i, int j, int counter1) {
-        //given the index of two used cards, supply the open cards with all possible combinations
-
-
-            for (int o = 0; o < availableCards.size(); o++) {
-                if (o == i || o == j) {
-                    continue;
-                }
-                openCards[4] = availableCards.get(o);
-
-                //new Thread(() -> {
-                //compare the hands
-                compareHandSets();
-                //}).start();
-
-            }
 
 
     }
@@ -311,8 +176,8 @@ public class PokerBoard {
     protected void compareHandSets() {
 
         //perform with current cards
-        HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards));
-        HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards));
+        HandSet handSet1 = new HandSet(makeKnownCardPool(hand1Cards, openCards.getOpenCards()));
+        HandSet handSet2 = new HandSet(makeKnownCardPool(hand2Cards, openCards.getOpenCards()));
 
         int result = compareHands(handSet1, handSet2);
         if (result == 1) {
