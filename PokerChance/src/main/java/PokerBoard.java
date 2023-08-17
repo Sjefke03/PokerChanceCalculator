@@ -125,16 +125,7 @@ public class PokerBoard {
 
         //wait until all calculations are done by checking if the required calculations are done
         while (requiredCalculations.get() > 1) {
-
-            //end thread that is waiting for calculations to finish
-
-//            try {
-//                Thread.sleep(1);
-//                System.out.println(requiredCalculations.get());
-//                System.out.println("Waiting to finish threads...");
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            //do nothing
         }
 
     }

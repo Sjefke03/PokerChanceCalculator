@@ -1,13 +1,11 @@
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 class PokerBoardTest {
-   
+
 
     @Test
     void calculateChancesRoyalFlush() {
@@ -36,7 +34,7 @@ class PokerBoardTest {
         float winChancePercent =  (float) winChance / total * 100;
         System.out.println("W " + winChance + " T " + tieChance + " L " + loseChance+ " TOTAL " + total);
         System.out.println("Chance of winning: " + winChancePercent);
-        assertTrue(total == 990);
+        assertEquals(990, total);
 
     }
 
@@ -52,7 +50,7 @@ class PokerBoardTest {
         float winChancePercent =  (float) winChance / total * 100;
         System.out.println("W " + winChance + " T " + tieChance + " L " + loseChance+ " TOTAL " + total);
         System.out.println("Chance of winning: " + winChancePercent);
-        assertTrue(total == 45540);
+        assertEquals(45540, total);
 
     }
 
